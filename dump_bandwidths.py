@@ -26,6 +26,7 @@ if __name__ == "__main__":
     row = 1
 
     for pcap in pcaps:
+        timer.record("%s started" % pcap)
         data = packet_tool.load_packets(config.pcap_dir + pcap)
         timer.record("%s loaded" % pcap)
         sheet.write(row, 0, pcap)

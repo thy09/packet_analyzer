@@ -18,6 +18,8 @@ def load_packets(f, ignore_ips = [], to_reload = False):
         ipdata = p.getlayer("IP")
         if ipdata.src in ignore_ips or ipdata.dst in ignore_ips:
             continue
+        if not ipdata.haslayer("TCP") and not ipdata.haslayer("UDP"):
+            continue
         sport = ipdata.payload.sport
         dport = ipdata.payload.dport
         pkt_info = {"time": p.time,
