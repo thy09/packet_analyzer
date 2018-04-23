@@ -48,6 +48,17 @@ def load_packets(f, ignore_ips = [], to_reload = False):
     tool.json2f(data, json_file)
     return data
 
+def max_ips(data, limit = 10, scale = 0.01):
+    ip2size = defaultdict(int)
+    total = 0
+    for p in data["packets"]:
+        ip2size[p["src"]] += p["size"]
+        ip2size[p["dst"]] += p["size"]
+        total += p["size"]
+    items = filter(lambda v: v[1] > scale * total, ip2size.items())
+    items = sorted(items, key = lambda v:v[1], reverse = True)
+    return map(lambda v:v[0], items[:limit])
+
 def filter_packets(data, key2ips):
     filtered = defaultdict(lambda: defaultdict(list))
     for p in data["packets"]:
@@ -87,6 +98,10 @@ def compute_bandwidth_for_keys(pkts_data, filtered):
     result = {"_all": compute_bandwidth(pkts_data["packets"], lease_time)}
     for k, data in filtered.items():
         result[k] = compute_bandwidth(data["all"], lease_time)
+        up = compute_bandwidth(data["up"], lease_time)
+        down = compute_bandwidth(data["down"], lease_time)
+        result[k]["up_bandwidth"] = up["bandwidth"]
+        result[k]["down_bandwidth"] = down["bandwidth"]
     return result
 
 def bandwidth_seqs(pkts, start_time, delta = 1.0):

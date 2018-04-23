@@ -14,8 +14,15 @@ if __name__ == "__main__":
     timer = Timer()
     pcaps = tool.traverse_files(config.pcap_dir, "pcap")
 
+    ignore_ips = []
+    if hasattr(config, "ignore_ips"):
+        ignore_ips = config.ignore_ips
+    to_reload = False
+    if hasattr(config, "to_reload"):
+        to_reload = config.to_reload
+    
     for pcap in pcaps:
-        data = packet_tool.load_packets(config.pcap_dir + pcap)
+        data = packet_tool.load_packets(config.pcap_dir + pcap, ignore_ips = ignore_ips, to_reload = to_reload)
         timer.record("%s loaded" % pcap)
 
         filtered = packet_tool.filter_packets(data, config.key2ips)

@@ -8,6 +8,10 @@ import os
 
 def plot_seqs(seqs, fname = None):
     for x, y, label in seqs:
+        if not isinstance(x, list):
+            x = list(x)
+        if not isinstance(y, list):
+            y = list(y)
         plt.plot(x, y, label = label, marker = "o")
     plt.legend(loc = "best")
     if fname is not None:
